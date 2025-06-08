@@ -3,225 +3,269 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FinanceChat - Controle Financeiro</title>
+    <title>Controle Financeiro</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <div class="app-container">
-        <!-- Header -->
-        <header class="app-header">
-            <h1>FinanceChat</h1>
-            <div class="header-controls">
-                <button class="btn btn--outline btn--sm" id="export-btn">Exportar CSV</button>
-                <input type="file" id="import-file" accept=".csv" style="display: none;">
-                <button class="btn btn--outline btn--sm" id="import-btn">Importar CSV</button>
-            </div>
+    <div class="container">
+        <!-- Header com Tabs -->
+        <header class="header">
+            <h1 class="header__title">💰 Controle Financeiro</h1>
+            <nav class="tabs">
+                <button class="tab-btn active" data-tab="chat">
+                    <span class="tab-icon">💬</span>
+                    <span class="tab-text">Chat</span>
+                </button>
+                <button class="tab-btn" data-tab="relatorios">
+                    <span class="tab-icon">📊</span>
+                    <span class="tab-text">Relatórios</span>
+                </button>
+                <button class="tab-btn" data-tab="investimentos">
+                    <span class="tab-icon">📈</span>
+                    <span class="tab-text">Investimentos</span>
+                </button>
+                <button class="tab-btn" data-tab="dados">
+                    <span class="tab-icon">💾</span>
+                    <span class="tab-text">Dados</span>
+                </button>
+            </nav>
         </header>
 
-        <!-- Navigation Tabs -->
-        <nav class="nav-tabs">
-            <button class="nav-tab active" data-tab="chat">💬 Chat</button>
-            <button class="nav-tab" data-tab="reports">📊 Relatórios</button>
-            <button class="nav-tab" data-tab="investments">💰 Investimentos</button>
-            <button class="nav-tab" data-tab="manual">📖 Manual</button>
-        </nav>
-
-        <!-- Chat Tab -->
-        <div class="tab-content active" id="chat-tab">
+        <!-- ABA CHAT -->
+        <div class="tab-content active" id="chat">
             <div class="chat-container">
-                <div class="chat-messages" id="chat-messages">
-                    <div class="message bot-message">
-                        Olá! Sou seu assistente financeiro. Digite uma transação ou comando para começar.
-                        <br><br>
-                        <strong>Exemplos:</strong><br>
-                        • Recebi R$ 3000 do salário no Nubank<br>
-                        • Gastei R$ 50 no mercado<br>
-                        • Transferi R$ 200 do Itaú para Nubank<br>
-                        • Investi R$ 1000 em ações<br>
-                        • /saldo - ver saldo atual<br>
-                        • /extrato - ver últimas transações
+                <div class="chat-messages" id="chatMessages">
+                    <div class="empty-state">
+                        <span class="empty-icon">💬</span>
+                        <p>Comece registrando sua primeira transação!</p>
                     </div>
                 </div>
-                <div class="chat-input-container">
-                    <input type="text" id="chat-input" placeholder="Digite sua transação ou comando..." class="form-control">
-                    <button id="send-btn" class="btn btn--primary">Enviar</button>
+            </div>
+
+            <form class="transaction-form" id="transactionForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Valor (R$)</label>
+                        <input type="text" class="form-control" id="amount" placeholder="0,00" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tipo</label>
+                        <select class="form-control" id="type" required>
+                            <option value="">Selecione</option>
+                            <option value="receita">💰 Receita</option>
+                            <option value="gasto">💸 Gasto</option>
+                            <option value="transferencia">💱 Transferência</option>
+                            <option value="investimento">📈 Investimento</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Descrição</label>
+                    <input type="text" class="form-control" id="description" placeholder="Descrição da transação" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Banco</label>
+                        <select class="form-control" id="bank" required>
+                            <option value="">Selecione</option>
+                        </select>
+                    </div>
+                    <div class="form-group hidden" id="customBankGroup">
+                        <label class="form-label">Nome do Banco</label>
+                        <input type="text" class="form-control" id="customBank" placeholder="Nome do banco">
+                    </div>
+                </div>
+
+                <div class="transfer-fields hidden" id="transferFields">
+                    <div class="form-group">
+                        <label class="form-label">Banco Destino</label>
+                        <select class="form-control" id="bankTo">
+                            <option value="">Selecione</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="investment-fields hidden" id="investmentFields">
+                    <div class="form-group">
+                        <label class="form-label">Valor Atual (opcional)</label>
+                        <input type="text" class="form-control" id="currentValue" placeholder="0,00">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn--primary btn--full-width">
+                    Registrar Transação
+                </button>
+            </form>
+        </div>
+
+        <!-- ABA RELATÓRIOS -->
+        <div class="tab-content" id="relatorios">
+            <div class="reports-grid">
+                <div class="stats-cards">
+                    <div class="stat-card receita">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-content">
+                            <h3 class="stat-title">Total Receitas</h3>
+                            <p class="stat-value" id="totalReceitas">R$ 0,00</p>
+                        </div>
+                    </div>
+                    <div class="stat-card gasto">
+                        <div class="stat-icon">💸</div>
+                        <div class="stat-content">
+                            <h3 class="stat-title">Total Gastos</h3>
+                            <p class="stat-value" id="totalGastos">R$ 0,00</p>
+                        </div>
+                    </div>
+                    <div class="stat-card transferencia">
+                        <div class="stat-icon">💱</div>
+                        <div class="stat-content">
+                            <h3 class="stat-title">Total Transferências</h3>
+                            <p class="stat-value" id="totalTransferencias">R$ 0,00</p>
+                        </div>
+                    </div>
+                    <div class="stat-card investimento">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-content">
+                            <h3 class="stat-title">Total Investimentos</h3>
+                            <p class="stat-value" id="totalInvestimentos">R$ 0,00</p>
+                        </div>
+                    </div>
+                    <div class="stat-card saldo">
+                        <div class="stat-icon">💳</div>
+                        <div class="stat-content">
+                            <h3 class="stat-title">Saldo Atual</h3>
+                            <p class="stat-value" id="saldoAtual">R$ 0,00</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <h3>Distribuição por Tipo</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="typeChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Distribuição por Banco</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="bankChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tips-section">
+                    <h3>📝 Dicas Financeiras</h3>
+                    <div id="financialTips" class="tips-list">
+                        <div class="tip-item">Registre mais transações para receber dicas personalizadas!</div>
+                    </div>
+                </div>
+
+                <div class="export-section">
+                    <button class="btn btn--secondary" id="exportBtn">
+                        📄 Exportar CSV
+                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- Reports Tab -->
-        <div class="tab-content" id="reports-tab">
-            <div class="reports-container">
-                <div class="summary-cards">
-                    <div class="card summary-card">
-                        <div class="card__body">
-                            <h3>Receitas</h3>
-                            <div class="amount positive" id="total-income">R$ 0,00</div>
+        <!-- ABA INVESTIMENTOS -->
+        <div class="tab-content" id="investimentos">
+            <div class="investments-section">
+                <div class="investment-summary">
+                    <div class="summary-cards">
+                        <div class="summary-card">
+                            <h4>Total Investido</h4>
+                            <p class="summary-value" id="totalInvestido">R$ 0,00</p>
                         </div>
-                    </div>
-                    <div class="card summary-card">
-                        <div class="card__body">
-                            <h3>Gastos</h3>
-                            <div class="amount negative" id="total-expenses">R$ 0,00</div>
+                        <div class="summary-card">
+                            <h4>Valor Atual</h4>
+                            <p class="summary-value" id="valorAtualTotal">R$ 0,00</p>
                         </div>
-                    </div>
-                    <div class="card summary-card">
-                        <div class="card__body">
-                            <h3>Saldo</h3>
-                            <div class="amount" id="total-balance">R$ 0,00</div>
+                        <div class="summary-card">
+                            <h4>Rendimento</h4>
+                            <p class="summary-value" id="rendimentoTotal">R$ 0,00 (0%)</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="chart-section">
-                    <div class="card">
-                        <div class="card__body">
-                            <h3>Gastos por Categoria</h3>
-                            <div class="chart-container">
-                                <canvas id="expenses-chart"></canvas>
-                            </div>
-                        </div>
+                <div class="investment-chart">
+                    <h3>Distribuição da Carteira</h3>
+                    <div class="chart-distribution-container">
+                        <canvas id="portfolioChart"></canvas>
                     </div>
                 </div>
 
-                <div class="transactions-section">
-                    <div class="card">
-                        <div class="card__body">
-                            <h3>Últimas Transações</h3>
-                            <div id="recent-transactions"></div>
-                        </div>
+                <div class="investments-list" id="investmentsList">
+                    <div class="empty-state">
+                        <span class="empty-icon">📈</span>
+                        <p>Nenhum investimento registrado ainda.</p>
                     </div>
                 </div>
+
+                <form class="investment-form" id="investmentForm">
+                    <h3>Adicionar Investimento</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Nome do Investimento</label>
+                            <input type="text" class="form-control" id="investmentName" placeholder="Ex: Tesouro Direto" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Valor Inicial (R$)</label>
+                            <input type="text" class="form-control" id="investmentInitial" placeholder="0,00" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Valor Atual (R$)</label>
+                            <input type="text" class="form-control" id="investmentCurrent" placeholder="0,00" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Banco/Corretora</label>
+                            <input type="text" class="form-control" id="investmentBank" placeholder="Ex: XP Investimentos" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn--primary btn--full-width">
+                        Adicionar Investimento
+                    </button>
+                </form>
             </div>
         </div>
 
-        <!-- Investments Tab -->
-        <div class="tab-content" id="investments-tab">
-            <div class="investments-container">
-                <div class="investment-form-section">
-                    <div class="card">
-                        <div class="card__body">
-                            <h3>Gerenciar Investimentos</h3>
-                            <form id="investment-form" class="investment-form">
-                                <div class="form-group">
-                                    <label class="form-label">Tipo de Investimento</label>
-                                    <select id="investment-type" class="form-control">
-                                        <option value="acoes">Ações</option>
-                                        <option value="fundos">Fundos</option>
-                                        <option value="renda-fixa">Renda Fixa</option>
-                                        <option value="criptomoedas">Criptomoedas</option>
-                                        <option value="tesouro-direto">Tesouro Direto</option>
-                                        <option value="outros">Outros</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Valor Investido (R$)</label>
-                                    <input type="number" id="investment-amount" class="form-control" step="0.01" required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Banco/Corretora</label>
-                                    <select id="investment-bank" class="form-control">
-                                        <option value="Banco do Brasil">Banco do Brasil</option>
-                                        <option value="Caixa">Caixa</option>
-                                        <option value="Itaú">Itaú</option>
-                                        <option value="Nubank">Nubank</option>
-                                        <option value="Inter">Inter</option>
-                                        <option value="Santander">Santander</option>
-                                        <option value="Bradesco">Bradesco</option>
-                                        <option value="XP Investimentos">XP Investimentos</option>
-                                        <option value="Clear">Clear</option>
-                                        <option value="Rico">Rico</option>
-                                        <option value="Outro">Outro</option>
-                                    </select>
-                                </div>
-                                <button type="submit" class="btn btn--primary">Adicionar Investimento</button>
-                            </form>
-                        </div>
+        <!-- ABA DADOS -->
+        <div class="tab-content" id="dados">
+            <div class="data-section">
+                <div class="data-card">
+                    <h3>📤 Exportar Dados</h3>
+                    <p>Baixe todas as suas transações e investimentos em formato CSV.</p>
+                    <button class="btn btn--primary" id="exportAllBtn">
+                        Exportar Todos os Dados
+                    </button>
+                </div>
+
+                <div class="data-card">
+                    <h3>📥 Importar Dados</h3>
+                    <p>Importe transações de um arquivo CSV. O arquivo deve ter as colunas: tipo, valor, descrição, banco, data.</p>
+                    <div class="file-upload">
+                        <input type="file" id="importFile" accept=".csv" class="file-input">
+                        <label for="importFile" class="file-label">
+                            Escolher Arquivo CSV
+                        </label>
+                        <button class="btn btn--secondary" id="importBtn" disabled>
+                            Importar Dados
+                        </button>
                     </div>
                 </div>
 
-                <div class="portfolio-overview">
-                    <div class="card">
-                        <div class="card__body">
-                            <h3>Total Investido</h3>
-                            <div class="amount positive" id="total-invested">R$ 0,00</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="portfolio-distribution">
-                    <div class="card">
-                        <div class="card__body">
-                            <h3>Distribuição da Carteira</h3>
-                            <div class="chart-container" id="portfolio-chart-container">
-                                <canvas id="portfolio-distribution-chart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="investments-list">
-                    <div class="card">
-                        <div class="card__body">
-                            <h3>Meus Investimentos</h3>
-                            <div id="investments-table"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Manual Tab -->
-        <div class="tab-content" id="manual-tab">
-            <div class="manual-container">
-                <div class="card">
-                    <div class="card__body">
-                        <h2>Manual de Uso - FinanceChat</h2>
-                        
-                        <h3>Como Usar o Chat</h3>
-                        <p>Digite transações em linguagem natural no chat:</p>
-                        <ul>
-                            <li><strong>Receitas:</strong> "Recebi R$ 3000 do salário no Nubank"</li>
-                            <li><strong>Gastos:</strong> "Gastei R$ 50 no mercado" ou "Paguei R$ 80 de luz"</li>
-                            <li><strong>Transferências:</strong> "Transferi R$ 200 do Itaú para Nubank"</li>
-                            <li><strong>Investimentos:</strong> "Investi R$ 1000 em ações no XP"</li>
-                        </ul>
-
-                        <h3>Comandos Especiais</h3>
-                        <ul>
-                            <li><strong>/saldo</strong> - Ver saldo atual de todas as contas</li>
-                            <li><strong>/extrato</strong> - Ver últimas 10 transações</li>
-                            <li><strong>/bancos</strong> - Ver lista de bancos cadastrados</li>
-                            <li><strong>/help</strong> - Mostrar ajuda</li>
-                        </ul>
-
-                        <h3>Aba Relatórios</h3>
-                        <p>Visualize resumos das suas finanças com gráficos e totais por categoria.</p>
-
-                        <h3>Aba Investimentos</h3>
-                        <p>Gerencie sua carteira de investimentos:</p>
-                        <ul>
-                            <li>Adicione investimentos por tipo</li>
-                            <li>Visualize distribuição da carteira</li>
-                            <li>Acompanhe total investido</li>
-                        </ul>
-
-                        <h3>Import/Export</h3>
-                        <p>Use os botões no cabeçalho para:</p>
-                        <ul>
-                            <li><strong>Exportar CSV:</strong> Baixar todas as transações</li>
-                            <li><strong>Importar CSV:</strong> Carregar dados de arquivo</li>
-                        </ul>
-
-                        <h3>Dicas</h3>
-                        <ul>
-                            <li>Os dados são salvos automaticamente no navegador</li>
-                            <li>Você pode adicionar bancos personalizados digitando "Outro"</li>
-                            <li>Use linguagem natural - o sistema entende variações</li>
-                            <li>Valores podem ser digitados com R$ ou sem</li>
-                        </ul>
-                    </div>
+                <div class="data-card danger">
+                    <h3>🗑️ Limpar Dados</h3>
+                    <p>Apaga permanentemente todas as transações e investimentos.</p>
+                    <button class="btn btn--outline" id="clearDataBtn">
+                        Limpar Todos os Dados
+                    </button>
                 </div>
             </div>
         </div>

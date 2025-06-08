@@ -1,0 +1,46 @@
+
+<!-- ESTRUTURA HTML CORRIGIDA PARA A ABA DE INVESTIMENTOS -->
+
+<div id="investments" class="tab-content investments-content" style="display: none;">
+    <!-- Seção de Resumo dos Investimentos -->
+    <div class="investments-summary">
+        <h2>📈 Resumo dos Investimentos</h2>
+        <div class="investment-cards-row">
+            <div class="card">
+                <h3>Total Investido</h3>
+                <p id="totalInvested">R$ 0,00</p>
+            </div>
+            <div class="card">
+                <h3>Valor Atual</h3>
+                <p id="currentValue">R$ 0,00</p>
+            </div>
+            <div class="card">
+                <h3>Rendimento</h3>
+                <p id="totalReturn">R$ 0,00</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Container Principal com Scroll -->
+    <div class="investments-cards-container">
+
+        <!-- SEÇÃO DO GRÁFICO COM CONTAINER FIXO -->
+        <div class="chart-distribution-container">
+            <h3>📊 Distribuição da Carteira</h3>
+            <div class="chart-wrapper">
+                <canvas id="distributionChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Lista de Investimentos -->
+        <div class="investments-list">
+            <h3>💼 Meus Investimentos</h3>
+            <div id="investmentsList"></div>
+        </div>
+    </div>
+
+    <!-- Seção de Controles -->
+    <div class="update-investments-section">
+        <button id="updateAllValues" class="btn-update">🔄 Atualizar Todos os Valores</button>
+    </div>
+</div>
